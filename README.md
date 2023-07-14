@@ -77,3 +77,37 @@
 1、我的github项目介绍：https://liuhuanyong.github.io。  
 2、我的csdn博客：https://blog.csdn.net/lhy2014  
 3、about me:刘焕勇，中国科学院软件研究所，lhy_in_blcu@126.com  
+
+## modify by gp @ 2023-7-14 15:22:33
+- 单独处理了词库的问题
+- 功能改为通过ES 查询获取结果
+- 数据清洗可以由java来实现
+已经解决的问题：
+
+1. jieba分词无法处理 包含特殊字符的分词
+    
+    ```html
+    1. 搜索 
+    　　　re_han_default = re.compile(“([\u4E00-\u9FD5a-zA-Z0-9+#&._]+)”, re.U) 
+    　　　改成 
+    　　　re_han_default = re.compile(“(.+)”, re.U) 
+    　　　 
+    　　2. 搜索 
+    　　　re_userdict = re.compile(‘^(.+?)( [0-9]+)?( [a-z]+)?＄’, re.U) 
+    　　　改成 
+    　　　re_userdict = re.compile(‘^(.+?)(\u0040\u0040[0-9]+)?(\u0040\u0040[a-z]+)?$’, re.U) 
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　 
+    　　3. 搜索 
+    　　　word, freq = line.split(’ ‘)[:2] 
+    　　　改成 
+    　　　word, freq = line.split(‘\u0040\u0040’)[:2]
+    ```
+    
+2. 解决问题1之后，无法处理词性的问题
+    
+    ```html
+    re_han_internal = re.compile("(.+)", re.U)
+    ```
+    
+
+剩下的就是根据模式匹配得到最终的结果
